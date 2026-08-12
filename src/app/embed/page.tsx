@@ -221,7 +221,7 @@ export default function Home() {
     
     // Convert Mimu / Custom variables into fake discord mentions for the preview
     // Matches {user}, {membercount}, {server}, etc. and standard @Mentions
-    const regex = /(\{(?:user|membercount|server|channel|user\.name|user\.mention|server\.memberCount)\}|@[a-zA-Z0-9_.]+)/gi;
+    const regex = /(\{(?:user|username|membercount|server|channel|user\.name|user\.mention|server\.memberCount)\}|@[a-zA-Z0-9_.]+)/gi;
     const parts = text.split(regex);
     
     return parts.map((part, i) => {
@@ -229,7 +229,7 @@ export default function Home() {
       if (lower === '{user}' || lower === '{user.mention}') {
         return <span key={i} className="discord-mention">@{user?.username || 'User'}</span>;
       }
-      if (lower === '{user.name}') {
+      if (lower === '{user.name}' || lower === '{username}') {
         return <span key={i} style={{fontWeight: 'bold'}}>{user?.username || 'User'}</span>;
       }
       if (lower === '{membercount}' || lower === '{server.membercount}') {
