@@ -16,6 +16,21 @@ export async function POST(req: Request) {
     }
 
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    
+    // Fetch fresh user data from Discord to update username dynamically
+    if (decoded.access_token) {
+      try {
+        const userResponse = await fetch('https://discord.com/api/v10/users/@me', {
+          headers: { Authorization: `Bearer ${decoded.access_token}` },
+        });
+        if (userResponse.ok) {
+          const freshData = await userResponse.json();
+          decoded.username = freshData.username;
+        }
+      } catch (e) {
+        console.error("Failed to fetch fresh user data from Discord");
+      }
+    }
 
     // Verify VIP+ status
     await connectToDatabase();
