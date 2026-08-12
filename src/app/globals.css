@@ -505,9 +505,25 @@ header {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  object-fit: cover;
+  flex-shrink: 0;
 }
 
+.discord-mention {
+  background-color: rgba(88, 101, 242, 0.3);
+  color: #c9cdfb;
+  padding: 0 4px;
+  border-radius: 3px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.discord-mention:hover {
+  background-color: rgba(88, 101, 242, 0.8);
+  color: #ffffff;
+}
+
+/* Form Styles */
 .loading-screen {
   display: flex;
   align-items: center;

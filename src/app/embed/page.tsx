@@ -41,6 +41,7 @@ export default function Home() {
   });
 
   const [showVipModal, setShowVipModal] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [vipCode, setVipCode] = useState('');
 
   const handleRedeemCode = async () => {
@@ -165,9 +166,76 @@ export default function Home() {
     setLoading(false);
   };
 
+  const handleCopyJSON = () => {
+    const embed: any = {};
+    if (embedColor) {
+      embed.color = parseInt(embedColor.replace('#', ''), 16);
+    }
+    if (embedTitle) embed.title = embedTitle;
+    if (embedUrl) embed.url = embedUrl;
+    if (embedDescription) embed.description = embedDescription;
+    
+    if (authorName) {
+      embed.author = { name: authorName };
+      if (authorIcon) embed.author.icon_url = authorIcon;
+      if (authorUrl) embed.author.url = authorUrl;
+    }
+    
+    if (thumbnailUrl) embed.thumbnail = { url: thumbnailUrl };
+    if (imageUrl) embed.image = { url: imageUrl };
+    
+    if (footerText) {
+      embed.footer = { text: footerText };
+      if (footerIcon) embed.footer.icon_url = footerIcon;
+    }
+    
+    const message_data: any = {};
+    if (content) message_data.content = content;
+    
+    if (Object.keys(embed).length > 1 || embedTitle || embedDescription) {
+      message_data.embeds = [embed];
+    }
+    
+    navigator.clipboard.writeText(JSON.stringify(message_data, null, 2));
+    setShowTutorial(true);
+  };
+
   if (loading && !isAuthenticated) {
     return <div className="loading-screen">Initializing Stella Engine...</div>;
   }
+
+  const renderDiscordText = (text: string) => {
+    if (!text) return text;
+    
+    // Convert Mimu / Custom variables into fake discord mentions for the preview
+    // Matches {user}, {membercount}, {server}, etc. and standard @Mentions
+    const regex = /(\{(?:user|membercount|server|channel|user\.name|user\.mention|server\.memberCount)\}|@[a-zA-Z0-9_.]+)/gi;
+    const parts = text.split(regex);
+    
+    return parts.map((part, i) => {
+      const lower = part.toLowerCase();
+      if (lower === '{user}' || lower === '{user.mention}') {
+        return <span key={i} className="discord-mention">@{user?.username || 'User'}</span>;
+      }
+      if (lower === '{user.name}') {
+        return <span key={i} style={{fontWeight: 'bold'}}>{user?.username || 'User'}</span>;
+      }
+      if (lower === '{membercount}' || lower === '{server.membercount}') {
+        return <span key={i} className="discord-mention" style={{backgroundColor: 'rgba(255, 255, 255, 0.1)', color: '#fff'}}>4,206</span>;
+      }
+      if (lower === '{server}') {
+        return <span key={i} className="discord-mention" style={{backgroundColor: 'rgba(255, 255, 255, 0.1)', color: '#fff'}}>My Server</span>;
+      }
+      if (lower === '{channel}') {
+        return <span key={i} className="discord-mention">#welcome</span>;
+      }
+      if (part.startsWith('@')) {
+        return <span key={i} className="discord-mention">{part}</span>;
+      }
+      // Support returning a single space if it's normal text, React handles string arrays well
+      return part;
+    });
+  };
 
   return (
     <>
@@ -319,12 +387,12 @@ export default function Home() {
             </div>
             
             {/* Send Button */}
-            <div className="section" style={{ borderBottom: 'none', marginTop: '10px' }}>
+            <div className="section" style={{ borderBottom: 'none', marginTop: '10px', display: 'flex', gap: '10px' }}>
               <button 
                 className="btn btn-discord large-btn" 
                 onClick={handleSend} 
                 disabled={loading || !selectedChannel}
-                style={{ width: '100%', padding: '15px', fontSize: '1.2rem', fontWeight: 'bold', display: 'flex', justifyContent: 'center', gap: '10px', alignItems: 'center' }}
+                style={{ flex: 1, padding: '15px', fontSize: '1.2rem', fontWeight: 'bold', display: 'flex', justifyContent: 'center', gap: '10px', alignItems: 'center' }}
               >
                 {loading ? 'Sending...' : (
                   <>
@@ -332,6 +400,16 @@ export default function Home() {
                     SEND MESSAGE
                   </>
                 )}
+              </button>
+              
+              <button 
+                className="btn" 
+                onClick={handleCopyJSON} 
+                title="Copy JSON Code to clipboard"
+                style={{ background: 'var(--bg-darker)', border: '1px solid var(--border)', padding: '0 20px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', fontSize: '1rem', fontWeight: 'bold', flex: 1 }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                COPY JSON CODE
               </button>
             </div>
           </div>
@@ -350,7 +428,7 @@ export default function Home() {
                   <span className="discord-timestamp">Today at {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                 </div>
                 
-                {content && <div className="discord-body">{content}</div>}
+                {content && <div className="discord-body">{renderDiscordText(content)}</div>}
                 
                 {(embedTitle || embedDescription || authorName || footerText || imageUrl || thumbnailUrl) && (
                   <div className="discord-embed" style={{ borderLeftColor: embedColor }}>
@@ -364,11 +442,11 @@ export default function Home() {
                       
                       {embedTitle && (
                         <div className={embedUrl ? "embed-title link" : "embed-title"}>
-                          {embedUrl ? <a href={embedUrl} target="_blank" style={{color: 'inherit', textDecoration: 'inherit'}}>{embedTitle}</a> : embedTitle}
+                          {embedUrl ? <a href={embedUrl} target="_blank" style={{color: 'inherit', textDecoration: 'inherit'}}>{renderDiscordText(embedTitle)}</a> : renderDiscordText(embedTitle)}
                         </div>
                       )}
                       
-                      {embedDescription && <div className="embed-description">{embedDescription}</div>}
+                      {embedDescription && <div className="embed-description">{renderDiscordText(embedDescription)}</div>}
                       
                       {thumbnailUrl && <img src={thumbnailUrl} alt="thumbnail" className="embed-thumbnail" />}
                     </div>
@@ -410,6 +488,30 @@ export default function Home() {
             <div className="modal-buttons" style={{display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px'}}>
               <button className="btn" style={{background: 'var(--bg-darker)'}} onClick={() => setShowVipModal(false)}>Cancel</button>
               <button className="btn btn-primary" onClick={handleRedeemCode} disabled={!vipCode}>Redeem Code</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tutorial Modal */}
+      {showTutorial && (
+        <div className="modal-overlay">
+          <div className="modal-content glass-panel" style={{maxWidth: '600px', textAlign: 'left'}}>
+            <h2 style={{textAlign: 'center', marginBottom: '20px'}}>✅ Codul JSON a fost copiat!</h2>
+            <p style={{marginBottom: '15px'}}>Acum poți folosi acest cod pentru a crea un mesaj automat în bot-ul tău.</p>
+            
+            <div style={{background: 'rgba(0,0,0,0.3)', padding: '15px', borderRadius: '8px', marginBottom: '20px'}}>
+              <h3 style={{fontSize: '1.1rem', marginBottom: '10px', color: 'var(--accent)'}}>Cum să îl folosești pe Stella Bot:</h3>
+              <ol style={{paddingLeft: '20px', lineHeight: '1.6'}}>
+                <li>Mergi pe serverul tău de Discord.</li>
+                <li>Folosește comanda bot-ului tău dedicată pentru mesaje de bun venit / embed-uri (de ex: <code style={{background: '#333', padding: '2px 5px', borderRadius: '3px'}}>/welcome set</code> sau <code style={{background: '#333', padding: '2px 5px', borderRadius: '3px'}}>/embed</code>).</li>
+                <li>Dă paste <strong>(CTRL + V)</strong> sau "Lipește" de pe telefon la codul JSON pe care tocmai l-ai copiat.</li>
+                <li>Bot-ul tău va citi codul și va ști exact ce titlu, ce poze și ce culori să folosească atunci când intră un membru!</li>
+              </ol>
+            </div>
+            
+            <div className="modal-buttons" style={{display: 'flex', justifyContent: 'center'}}>
+              <button className="btn btn-discord large-btn" onClick={() => setShowTutorial(false)}>Am înțeles, închide</button>
             </div>
           </div>
         </div>
