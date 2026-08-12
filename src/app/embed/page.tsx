@@ -514,7 +514,7 @@ export default function Home() {
                 <li><code style={{color: '#c9cdfb'}}>{'{user}'}</code> - Pings the user (e.g. @zynex.05)</li>
                 <li><code style={{color: '#c9cdfb'}}>{'{username}'}</code> - Shows the user's name without pinging (e.g. zynex.05)</li>
                 <li><code style={{color: '#c9cdfb'}}>{'{server}'}</code> - Shows the server name (e.g. Stella Support)</li>
-                <li><code style={{color: '#c9cdfb'}}>{'{embed:Name}'}</code> - Attaches an embed to a greet message (e.g. {embed:welcome})</li>
+                <li><code style={{color: '#c9cdfb'}}>{'{embed:Name}'}</code> - Attaches an embed to a welcome message (e.g. {embed:welcome})</li>
               </ul>
             </div>
             
