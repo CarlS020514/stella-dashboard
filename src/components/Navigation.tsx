@@ -158,10 +158,10 @@ export default function Navigation() {
               <div 
                 className="user-profile interactive" 
                 onClick={() => setVariablesOpen(!variablesOpen)}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 12px', background: 'rgba(255,255,255,0.05)', borderRadius: '20px' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', padding: '8px 12px', background: 'rgba(255,255,255,0.05)', borderRadius: '20px' }}
               >
                 <span style={{ fontSize: '1.2rem' }}>✨</span>
-                <span style={{ fontWeight: '500' }}>Variables ▾</span>
+                <span style={{ fontWeight: 'bold' }}>▾</span>
               </div>
               
               {variablesOpen && (
