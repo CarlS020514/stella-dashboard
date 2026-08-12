@@ -176,7 +176,10 @@ export default function Navigation() {
                     <div style={{ marginBottom: '8px' }}><code style={{ color: '#c9cdfb', background: 'rgba(0,0,0,0.3)', padding: '2px 5px', borderRadius: '4px' }}>{'{user}'}</code> - Pings the user</div>
                     <div style={{ marginBottom: '8px' }}><code style={{ color: '#c9cdfb', background: 'rgba(0,0,0,0.3)', padding: '2px 5px', borderRadius: '4px' }}>{'{username}'}</code> - User's name</div>
                     <div style={{ marginBottom: '8px' }}><code style={{ color: '#c9cdfb', background: 'rgba(0,0,0,0.3)', padding: '2px 5px', borderRadius: '4px' }}>{'{server}'}</code> - Server name</div>
-                    <div><code style={{ color: '#c9cdfb', background: 'rgba(0,0,0,0.3)', padding: '2px 5px', borderRadius: '4px' }}>{'{embed:Name}'}</code> - Attach custom embed</div>
+                    <div style={{ marginBottom: '8px' }}><code style={{ color: '#c9cdfb', background: 'rgba(0,0,0,0.3)', padding: '2px 5px', borderRadius: '4px' }}>{'{embed:Name}'}</code> - Attach custom embed</div>
+                    <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                      <strong>Pro tip:</strong> To ping a specific user, use their Discord ID like this: <code style={{ color: '#c9cdfb', background: 'rgba(0,0,0,0.3)', padding: '2px', borderRadius: '4px' }}>&lt;@123456789&gt;</code>
+                    </div>
                   </div>
                 </div>
               )}

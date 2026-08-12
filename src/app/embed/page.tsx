@@ -517,6 +517,10 @@ export default function Home() {
                 <li><code style={{color: '#c9cdfb'}}>{'{server}'}</code> - Shows the server name (e.g. Stella Support)</li>
                 <li><code style={{color: '#c9cdfb'}}>{'{embed:Name}'}</code> - Attaches an embed to a welcome message (e.g. {'{embed:welcome}'})</li>
               </ul>
+              
+              <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                <strong>Pro tip:</strong> To ping a specific user in your text, use their Discord ID like this: <code style={{ color: '#c9cdfb', background: 'rgba(0,0,0,0.3)', padding: '2px 4px', borderRadius: '4px' }}>&lt;@123456789&gt;</code>
+              </div>
             </div>
             
             <div className="modal-buttons" style={{display: 'flex', justifyContent: 'center'}}>
