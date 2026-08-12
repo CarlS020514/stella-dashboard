@@ -161,7 +161,12 @@ export default function Navigation() {
                 style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', padding: '8px 12px', background: 'rgba(255,255,255,0.05)', borderRadius: '20px' }}
               >
                 <span style={{ fontSize: '1.2rem' }}>✨</span>
-                <span style={{ fontWeight: 'bold' }}>▾</span>
+                <span style={{ 
+                  fontWeight: 'bold', 
+                  display: 'inline-block',
+                  transition: 'transform 0.3s ease',
+                  transform: variablesOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                }}>▾</span>
               </div>
               
               {variablesOpen && (
