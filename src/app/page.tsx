@@ -1,69 +1,64 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        setIsAuthenticated(data.authenticated);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleLogin = () => {
+    window.location.href = '/api/auth/login';
+  };
+
+  if (loading) {
+    return <div className="loading-screen">Loading Stella Hub...</div>;
+  }
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="home-container">
+      <div className="glass-panel text-center hero-panel">
+        <h1 className="hero-title">Stella Dashboard</h1>
+        <p className="hero-subtitle">The ultimate command center for your Discord servers.</p>
+        
+        <div className="feature-grid">
+          <div className="feature-card">
+            <h3>🎨 Embed Generator</h3>
+            <p>Create beautiful, customized embed messages with live previews.</p>
+          </div>
+          <div className="feature-card">
+            <h3>👑 PRO Features</h3>
+            <p>Customize sender profiles, unlock advanced webhooks, and more.</p>
+          </div>
+          <div className="feature-card">
+            <h3>⚡ Lightning Fast</h3>
+            <p>Zero latency delivery directly to your Discord channels.</p>
+          </div>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="cta-section">
+          {!isAuthenticated ? (
+            <button className="btn btn-discord large-btn" onClick={handleLogin}>
+              Login with Discord
+            </button>
+          ) : (
+            <div className="cta-buttons">
+              <Link href="/embed" className="btn btn-primary large-btn">
+                Open Embed Generator
+              </Link>
+            </div>
+          )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
