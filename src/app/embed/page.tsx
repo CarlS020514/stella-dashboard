@@ -497,21 +497,29 @@ export default function Home() {
       {showTutorial && (
         <div className="modal-overlay">
           <div className="modal-content glass-panel" style={{maxWidth: '600px', textAlign: 'left'}}>
-            <h2 style={{textAlign: 'center', marginBottom: '20px'}}>✅ Codul JSON a fost copiat!</h2>
-            <p style={{marginBottom: '15px'}}>Acum poți folosi acest cod pentru a crea un mesaj automat în bot-ul tău.</p>
+            <h2 style={{textAlign: 'center', marginBottom: '20px'}}>✅ JSON Code Copied!</h2>
+            <p style={{marginBottom: '15px'}}>You can now use this code to create an automated message in your bot.</p>
             
             <div style={{background: 'rgba(0,0,0,0.3)', padding: '15px', borderRadius: '8px', marginBottom: '20px'}}>
-              <h3 style={{fontSize: '1.1rem', marginBottom: '10px', color: 'var(--accent)'}}>Cum să îl folosești pe Stella Bot:</h3>
-              <ol style={{paddingLeft: '20px', lineHeight: '1.6'}}>
-                <li>Mergi pe serverul tău de Discord.</li>
-                <li>Folosește comanda bot-ului tău dedicată pentru mesaje de bun venit / embed-uri (de ex: <code style={{background: '#333', padding: '2px 5px', borderRadius: '3px'}}>/welcome set</code> sau <code style={{background: '#333', padding: '2px 5px', borderRadius: '3px'}}>/embed</code>).</li>
-                <li>Dă paste <strong>(CTRL + V)</strong> sau "Lipește" de pe telefon la codul JSON pe care tocmai l-ai copiat.</li>
-                <li>Bot-ul tău va citi codul și va ști exact ce titlu, ce poze și ce culori să folosească atunci când intră un membru!</li>
+              <h3 style={{fontSize: '1.1rem', marginBottom: '10px', color: 'var(--accent)'}}>How to use it on Stella Bot:</h3>
+              <ol style={{paddingLeft: '20px', lineHeight: '1.6', marginBottom: '15px'}}>
+                <li>Go to your Discord server.</li>
+                <li>Use your bot's command for welcome/leave embeds (e.g., <code style={{background: '#333', padding: '2px 5px', borderRadius: '3px'}}>/embed edit</code>).</li>
+                <li>Paste <strong>(CTRL + V)</strong> the JSON code you just copied when asked for the embed data.</li>
+                <li>The bot will read the code and instantly apply your colors, titles, and images!</li>
               </ol>
+              
+              <h3 style={{fontSize: '1.1rem', marginBottom: '10px', color: 'var(--accent)'}}>✨ Available Variables:</h3>
+              <ul style={{paddingLeft: '20px', lineHeight: '1.6', fontSize: '0.95rem'}}>
+                <li><code style={{color: '#c9cdfb'}}>{'{user}'}</code> - Pings the user (e.g. @zynex.05)</li>
+                <li><code style={{color: '#c9cdfb'}}>{'{username}'}</code> - Shows the user's name without pinging (e.g. zynex.05)</li>
+                <li><code style={{color: '#c9cdfb'}}>{'{server}'}</code> - Shows the server name (e.g. Stella Support)</li>
+                <li><code style={{color: '#c9cdfb'}}>{'{embed:Name}'}</code> - Attaches an embed to a greet message (e.g. {embed:welcome})</li>
+              </ul>
             </div>
             
             <div className="modal-buttons" style={{display: 'flex', justifyContent: 'center'}}>
-              <button className="btn btn-discord large-btn" onClick={() => setShowTutorial(false)}>Am înțeles, închide</button>
+              <button className="btn btn-discord large-btn" onClick={() => setShowTutorial(false)}>Got it, close</button>
             </div>
           </div>
         </div>
