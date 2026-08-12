@@ -10,7 +10,9 @@ export default function Navigation() {
   
   // Dropdown States
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [variablesOpen, setVariablesOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const variablesRef = useRef<HTMLDivElement>(null);
   
   // VIP Modal States
   const [showVipModal, setShowVipModal] = useState(false);
@@ -117,6 +119,9 @@ export default function Navigation() {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDropdownOpen(false);
       }
+      if (variablesRef.current && !variablesRef.current.contains(event.target as Node)) {
+        setVariablesOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -147,12 +152,37 @@ export default function Navigation() {
             Login with Discord
           </button>
         ) : (
-          <div className="user-profile-container" ref={dropdownRef} style={{ position: 'relative' }}>
-            <div 
-              className="user-profile interactive" 
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }}
-            >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            {/* Variables Dropdown */}
+            <div className="variables-dropdown-container" ref={variablesRef} style={{ position: 'relative' }}>
+              <div 
+                className="user-profile interactive" 
+                onClick={() => setVariablesOpen(!variablesOpen)}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 12px', background: 'rgba(255,255,255,0.05)', borderRadius: '20px' }}
+              >
+                <span style={{ fontSize: '1.2rem' }}>✨</span>
+                <span style={{ fontWeight: '500' }}>Variables ▾</span>
+              </div>
+              
+              {variablesOpen && (
+                <div className="profile-dropdown" style={{ width: '320px', right: 0 }}>
+                  <div className="dropdown-section-title">✨ Available Variables</div>
+                  <div style={{ padding: '10px', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                    <div style={{ marginBottom: '8px' }}><code style={{ color: '#c9cdfb', background: 'rgba(0,0,0,0.3)', padding: '2px 5px', borderRadius: '4px' }}>{'{user}'}</code> - Pings the user</div>
+                    <div style={{ marginBottom: '8px' }}><code style={{ color: '#c9cdfb', background: 'rgba(0,0,0,0.3)', padding: '2px 5px', borderRadius: '4px' }}>{'{username}'}</code> - User's name</div>
+                    <div style={{ marginBottom: '8px' }}><code style={{ color: '#c9cdfb', background: 'rgba(0,0,0,0.3)', padding: '2px 5px', borderRadius: '4px' }}>{'{server}'}</code> - Server name</div>
+                    <div><code style={{ color: '#c9cdfb', background: 'rgba(0,0,0,0.3)', padding: '2px 5px', borderRadius: '4px' }}>{'{embed:Name}'}</code> - Attach custom embed</div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="user-profile-container" ref={dropdownRef} style={{ position: 'relative' }}>
+              <div 
+                className="user-profile interactive" 
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }}
+              >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <img src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`} alt="Avatar" className="user-avatar" />
                 <span>{user.username}</span>
@@ -276,6 +306,7 @@ export default function Navigation() {
                 </a>
               </div>
             )}
+            </div>
           </div>
         )}
       </div>

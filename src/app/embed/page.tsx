@@ -37,7 +37,8 @@ export default function Home() {
     message: true,
     author: false,
     images: false,
-    footer: false
+    footer: false,
+    variables: false
   });
 
   const [showVipModal, setShowVipModal] = useState(false);
