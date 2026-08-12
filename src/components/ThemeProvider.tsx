@@ -73,25 +73,26 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     }
   }, [themeColor, mounted]);
 
-  // Update Viewport
+  // Desktop Mode Force
   useEffect(() => {
-    if (mounted) {
-      localStorage.setItem('stella_desktop_mode', desktopMode ? 'true' : 'false');
-      let meta = document.querySelector('meta[name="viewport"]');
-      if (!meta) {
-        meta = document.createElement('meta');
-        meta.setAttribute('name', 'viewport');
-        document.head.appendChild(meta);
-      }
-      
-      if (desktopMode) {
-        // Desktop mode: normal behavior, user can pinch/zoom
-        meta.setAttribute('content', 'width=device-width, initial-scale=1');
-      } else {
-        // Mobile mode: strictly locked width, no zoom
-        meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0');
-      }
+    if (!mounted) return;
+    
+    let meta = document.querySelector('meta[name="viewport"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', 'viewport');
+      document.head.appendChild(meta);
     }
+    
+    if (desktopMode) {
+      meta.setAttribute('content', 'width=1200'); // Force wide layout for mobile devices
+      document.body.classList.add('force-desktop');
+    } else {
+      meta.setAttribute('content', 'width=device-width, initial-scale=1');
+      document.body.classList.remove('force-desktop');
+    }
+    
+    localStorage.setItem('stella_desktop_mode', String(desktopMode));
   }, [desktopMode, mounted]);
 
   return (
