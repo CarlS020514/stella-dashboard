@@ -44,6 +44,17 @@ export default function Home() {
   const [showVipModal, setShowVipModal] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [vipCode, setVipCode] = useState('');
+  
+  const [ownerName, setOwnerName] = useState('zynex.05');
+
+  useEffect(() => {
+    fetch('/api/owner')
+      .then(res => res.json())
+      .then(data => {
+        if (data.username) setOwnerName(data.username);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleRedeemCode = async () => {
     if (!vipCode) return;
@@ -474,7 +485,7 @@ export default function Home() {
           <div className="modal-content glass-panel">
             <h2>👑 Unlock PRO Features</h2>
             <p>Customizing the sender's username and avatar is a PRO exclusive feature.</p>
-            <p className="contact-text">Contact <strong>@zynex.05</strong> on Discord to purchase a VIP code.</p>
+            <p className="contact-text">Contact <strong>@{ownerName}</strong> on Discord to purchase a VIP code.</p>
             
             <div className="form-group" style={{marginTop: '20px'}}>
               <input 
@@ -512,8 +523,8 @@ export default function Home() {
               
               <h3 style={{fontSize: '1.1rem', marginBottom: '10px', color: 'var(--accent)'}}>✨ Available Variables:</h3>
               <ul style={{paddingLeft: '20px', lineHeight: '1.6', fontSize: '0.95rem'}}>
-                <li><code style={{color: '#c9cdfb'}}>{'{user}'}</code> - Pings the user (e.g. @zynex.05)</li>
-                <li><code style={{color: '#c9cdfb'}}>{'{username}'}</code> - Shows the user's name without pinging (e.g. zynex.05)</li>
+                <li><code style={{color: '#c9cdfb'}}>{'{user}'}</code> - Pings the user (e.g. @{ownerName})</li>
+                <li><code style={{color: '#c9cdfb'}}>{'{username}'}</code> - Shows the user's name without pinging (e.g. {ownerName})</li>
                 <li><code style={{color: '#c9cdfb'}}>{'{server}'}</code> - Shows the server name (e.g. Stella Support)</li>
                 <li><code style={{color: '#c9cdfb'}}>{'{embed:Name}'}</code> - Attaches an embed to a welcome message (e.g. {'{embed:welcome}'})</li>
               </ul>
