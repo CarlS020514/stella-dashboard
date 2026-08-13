@@ -2,12 +2,6 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import connectToDatabase from '@/lib/mongodb';
-import mongoose from 'mongoose';
-
-async function getCollection() {
-  await connectToDatabase();
-  return mongoose.connection.db!.collection('dashboard_config');
-}
 
 export async function POST(request: Request) {
   const cookieStore = await cookies();
@@ -22,9 +16,13 @@ export async function POST(request: Request) {
     }
 
     const { embed } = await request.json();
-    const col = await getCollection();
-
-    await col.updateOne(
+    const conn = await connectToDatabase();
+    
+    // Use the raw MongoDB driver directly - most reliable approach
+    const db = conn.connection.db;
+    if (!db) throw new Error('Database connection not ready');
+    
+    await db.collection('dashboard_config').updateOne(
       { _id: 'dashboard_config' as any },
       { $set: { stella_rank_embed: embed } },
       { upsert: true }
@@ -32,8 +30,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('stella-rank POST error:', error);
-    return NextResponse.json({ error: 'Failed to save Stella rank config' }, { status: 500 });
+    console.error('stella-rank POST error:', error?.message || error);
+    return NextResponse.json({ error: error?.message || 'Failed to save' }, { status: 500 });
   }
 }
 
@@ -48,12 +46,14 @@ export async function GET() {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const col = await getCollection();
-    const dbData = await col.findOne({ _id: 'dashboard_config' as any });
+    const conn = await connectToDatabase();
+    const db = conn.connection.db;
+    if (!db) throw new Error('Database connection not ready');
 
+    const dbData = await db.collection('dashboard_config').findOne({ _id: 'dashboard_config' as any });
     return NextResponse.json({ stella_rank_embed: (dbData as any)?.stella_rank_embed || {} });
   } catch (error: any) {
-    console.error('stella-rank GET error:', error);
-    return NextResponse.json({ error: 'Failed to fetch Stella rank config' }, { status: 500 });
+    console.error('stella-rank GET error:', error?.message || error);
+    return NextResponse.json({ error: error?.message || 'Failed to fetch' }, { status: 500 });
   }
 }
