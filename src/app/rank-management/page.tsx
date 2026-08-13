@@ -22,7 +22,9 @@ export default function RankManagement() {
   // XP Management
   const [xpActive, setXpActive] = useState(true);
   const [boostExpires, setBoostExpires] = useState(0);
+  const [lastBonusTime, setLastBonusTime] = useState(0);
   const [claimStatus, setClaimStatus] = useState('');
+  const [now, setNow] = useState(Date.now() / 1000);
 
   // Card Customization
   const [borderColor, setBorderColor] = useState("#2b2d31");
@@ -40,6 +42,13 @@ export default function RankManagement() {
   const [activeTab, setActiveTab] = useState('xp');
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now() / 1000);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     fetch('/api/auth/me')
       .then(res => res.json())
       .then(data => {
@@ -52,6 +61,7 @@ export default function RankManagement() {
               if (config) {
                 setXpActive(config.xp_multiplier_active !== false);
                 if (config.vip_boost_expires) setBoostExpires(config.vip_boost_expires);
+                if (config.last_bonus_time) setLastBonusTime(config.last_bonus_time);
                 
                 if (config.rank_embed) {
                   setBorderColor(config.rank_embed.color ? '#' + config.rank_embed.color.toString(16).padStart(6, '0') : "#2b2d31");
@@ -109,7 +119,8 @@ export default function RankManagement() {
     });
     
     if (res.ok) {
-      setClaimStatus('Request sent to Bot! (Cooldown: 2 Hours)');
+      setClaimStatus('Request sent to Bot!');
+      setLastBonusTime(Date.now() / 1000);
       setTimeout(() => setClaimStatus(''), 5000);
     } else {
       setClaimStatus('Error processing request.');
@@ -185,6 +196,12 @@ export default function RankManagement() {
   const hasBoost = Date.now() < boostExpires;
   const currentProgress = PROGRESS_STYLES[progressStyle];
   const barText = currentProgress.filled.repeat(6) + currentProgress.empty.repeat(4);
+  
+  const timeSinceLastBonus = now - lastBonusTime;
+  const canClaim = timeSinceLastBonus >= 7200;
+  const cooldownRemaining = 7200 - timeSinceLastBonus;
+  const cooldownMins = Math.floor(cooldownRemaining / 60);
+  const cooldownSecs = Math.floor(cooldownRemaining % 60);
 
   return (
     <div className="container">
@@ -213,9 +230,15 @@ export default function RankManagement() {
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: 10 }}>Claim Bonus XP</label>
-              <button className="btn btn-discord large-btn" style={{ width: '100%', background: '#43b581' }} onClick={handleClaimXp}>
-                Claim XP Now
-              </button>
+              {canClaim ? (
+                <button className="btn btn-discord large-btn" style={{ width: '100%', background: '#43b581' }} onClick={handleClaimXp}>
+                  Claim XP Now
+                </button>
+              ) : (
+                <button className="btn btn-discord large-btn" style={{ width: '100%', background: '#333', color: '#aaa', cursor: 'not-allowed' }} disabled>
+                  Next Bonus in: {cooldownMins}m {cooldownSecs}s
+                </button>
+              )}
               {claimStatus && <div style={{ marginTop: 10, fontSize: '0.9rem', color: claimStatus.includes('Error') ? '#ED4245' : '#57F287' }}>{claimStatus}</div>}
             </div>
           </div>
@@ -506,6 +529,7 @@ export default function RankManagement() {
                   <div style={{ width: '60%', height: '100%', background: '#5865F2', borderRadius: 6 }}></div>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         )}
