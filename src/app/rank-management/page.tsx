@@ -30,6 +30,12 @@ export default function RankManagement() {
   const [font, setFont] = useState("Roboto");
   const [progressStyle, setProgressStyle] = useState(0);
 
+  // Admin Global Card Customization
+  const [globalBorderColor, setGlobalBorderColor] = useState("#2b2d31");
+  const [globalBgUrl, setGlobalBgUrl] = useState("");
+  const [globalFont, setGlobalFont] = useState("Roboto");
+  const [globalProgressStyle, setGlobalProgressStyle] = useState(0);
+
   // Accordion state
   const [activeTab, setActiveTab] = useState('xp');
 
@@ -61,6 +67,26 @@ export default function RankManagement() {
                 }
               }
             }).catch(() => {});
+            
+          // If admin, load global rank
+          if (data.user.username === 'scroppy') {
+            fetch('/api/admin/global-rank')
+              .then(r => r.json())
+              .then(globalData => {
+                const conf = globalData.global_rank_embed;
+                if (conf) {
+                  setGlobalBorderColor(conf.color ? '#' + conf.color.toString(16).padStart(6, '0') : "#2b2d31");
+                  setGlobalBgUrl(conf.image_url || "");
+                  setGlobalFont(conf.author_name || "Roboto");
+                  const footer = conf.footer_text || "🟩,⬛";
+                  const parts = footer.split(",");
+                  if (parts.length >= 2) {
+                    const index = PROGRESS_STYLES.findIndex(p => p.filled === parts[0].trim());
+                    if (index !== -1) setGlobalProgressStyle(index);
+                  }
+                }
+              }).catch(() => {});
+          }
         }
         setLoading(false);
       });
@@ -131,6 +157,27 @@ export default function RankManagement() {
     }
   };
 
+  const handleSaveGlobal = async () => {
+    const embed = {
+      color: parseInt(globalBorderColor.replace('#', ''), 16),
+      image_url: globalBgUrl,
+      author_name: globalFont,
+      footer_text: `${PROGRESS_STYLES[globalProgressStyle].filled},${PROGRESS_STYLES[globalProgressStyle].empty}`
+    };
+    
+    const res = await fetch('/api/admin/global-rank', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ embed })
+    });
+    
+    if (res.ok) {
+      alert("Global Default Rank Card Saved Successfully!");
+    } else {
+      alert("Error saving global config.");
+    }
+  };
+
   if (loading) return <div className="loading-screen">Loading...</div>;
   if (!user) return <div style={{padding: 50, textAlign: 'center'}}>Please login first.</div>;
   if (!user.is_vip) return <div style={{padding: 50, textAlign: 'center', color: '#ff5555'}}>VIP Required to access Rank Management.</div>;
@@ -141,7 +188,7 @@ export default function RankManagement() {
 
   return (
     <div className="container">
-      <div className="sidebar" style={{ width: '450px' }}>
+      <div className="sidebar" style={{ width: '100%', maxWidth: '450px', flex: '0 0 auto' }}>
         <h2 style={{ padding: 20 }}>Rank Management</h2>
 
         {/* Accordion 1: XP Management */}
@@ -263,17 +310,155 @@ export default function RankManagement() {
             </button>
           </div>
         )}
+
+        {/* Accordion 4: Global Settings (Admin) */}
+        {user.username === 'scroppy' && (
+          <>
+            <div 
+              className="form-group" 
+              style={{ padding: '15px 20px', background: activeTab === 'admin' ? '#202225' : 'transparent', borderBottom: '1px solid #202225', cursor: 'pointer', margin: 0, marginTop: 20, borderTop: '2px solid #f1c40f' }}
+              onClick={() => setActiveTab('admin')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'bold' }}>
+                <span style={{ color: '#f1c40f' }}>👑 Global Bot Settings (Admin)</span>
+                <span>{activeTab === 'admin' ? '▼' : '▶'}</span>
+              </div>
+            </div>
+            {activeTab === 'admin' && (
+              <div style={{ padding: '20px', background: '#202225', borderTop: '1px solid #333' }}>
+                <div style={{ color: '#f1c40f', marginBottom: 15, fontSize: '0.85rem' }}>
+                  This sets the default rank card appearance for everyone who doesn't have VIP+.
+                </div>
+                
+                <div style={{ marginBottom: 15 }}>
+                  <label>Global Embed Border Color</label>
+                  <input 
+                    type="color" 
+                    value={globalBorderColor} 
+                    onChange={e => setGlobalBorderColor(e.target.value)}
+                    style={{ width: '100%', height: 40, cursor: 'pointer', border: 'none', background: 'transparent' }}
+                  />
+                </div>
+                
+                <div style={{ marginBottom: 15 }}>
+                  <label>Global Background Image URL</label>
+                  <input 
+                    type="text" 
+                    placeholder="https://example.com/image.png" 
+                    value={globalBgUrl} 
+                    onChange={e => setGlobalBgUrl(e.target.value)}
+                    style={{ width: '100%', padding: '8px', borderRadius: 4, border: '1px solid #444', background: '#1e1f22', color: '#fff' }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: 15 }}>
+                  <label>Global Default Font</label>
+                  <select 
+                    value={globalFont} 
+                    onChange={e => setGlobalFont(e.target.value)} 
+                    style={{ width: '100%', padding: '8px', borderRadius: 4, border: '1px solid #444', background: '#1e1f22', color: '#fff' }}
+                  >
+                    {FONTS.map(f => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: 20 }}>
+                  <label>Global Progress Bar Style</label>
+                  <select 
+                    value={globalProgressStyle} 
+                    onChange={e => setGlobalProgressStyle(parseInt(e.target.value))} 
+                    style={{ width: '100%', padding: '8px', borderRadius: 4, border: '1px solid #444', background: '#1e1f22', color: '#fff' }}
+                  >
+                    {PROGRESS_STYLES.map((style, i) => (
+                      <option key={i} value={i}>{style.label} ({style.filled}{style.empty})</option>
+                    ))}
+                  </select>
+                </div>
+
+                <button className="btn" onClick={handleSaveGlobal} style={{ width: '100%', background: '#f1c40f', color: '#000' }}>
+                  Save Global Defaults
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       <div className="preview-area" style={{ background: '#1e1f22', alignItems: 'center' }}>
-        <div style={{
-          width: 520,
-          background: '#2b2d31',
-          borderLeft: `4px solid ${borderColor}`,
-          borderRadius: 4,
-          padding: 16,
-          boxShadow: '0 4px 15px rgba(0,0,0,0.5)'
-        }}>
+        {activeTab === 'admin' ? (
+          /* ADMIN PREVIEW */
+          <div style={{
+            width: '100%',
+            maxWidth: 520,
+            background: '#2b2d31',
+            borderLeft: `4px solid ${globalBorderColor}`,
+            borderRadius: 4,
+            padding: 16,
+            boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+            boxSizing: 'border-box'
+          }}>
+            <h3 style={{ fontSize: '1rem', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : "https://cdn.discordapp.com/embed/avatars/0.png"} style={{width: 24, height: 24, borderRadius: '50%'}} />
+              Level Stats - {user.username || "User"}
+            </h3>
+            
+            <div style={{ display: 'flex', gap: 20, marginBottom: 12 }}>
+              <div>
+                <div style={{ fontSize: '0.85rem', color: '#b5bac1', marginBottom: 4, fontWeight: 600 }}>Current Level</div>
+                <div style={{ fontSize: '1rem', color: '#dbdee1' }}>15 (Global Preview)</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '0.85rem', color: '#b5bac1', marginBottom: 4, fontWeight: 600 }}>XP</div>
+                <div style={{ fontSize: '1rem', color: '#dbdee1' }}>1500 / 2500</div>
+              </div>
+            </div>
+            
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: '0.85rem', color: '#b5bac1', marginBottom: 4, fontWeight: 600 }}>Progress</div>
+              <div style={{ fontSize: '1rem', color: '#dbdee1', letterSpacing: 2 }}>{PROGRESS_STYLES[globalProgressStyle].filled.repeat(6) + PROGRESS_STYLES[globalProgressStyle].empty.repeat(4)}</div>
+            </div>
+
+            <div style={{
+              width: '100%',
+              height: 160,
+              background: globalBgUrl ? `url(${globalBgUrl}) center/cover no-repeat` : '#1e1f22',
+              borderRadius: 8,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              {!globalBgUrl && <span style={{color: '#80848e'}}>Your Image Here</span>}
+              {globalBgUrl && <div style={{position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)'}}></div>}
+              
+              <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', width: '100%', padding: 20, gap: 15 }}>
+                <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : "https://cdn.discordapp.com/embed/avatars/0.png"} style={{width: 80, height: 80, borderRadius: '50%', border: '3px solid rgba(255,255,255,0.7)'}} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: '#fff', fontSize: '1.2rem', fontFamily: globalFont === 'Roboto' ? 'Roboto, sans-serif' : `"${globalFont}", sans-serif`, fontWeight: 'bold' }}>{user.username}</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10, color: '#ddd', fontSize: '0.9rem', fontFamily: globalFont === 'Roboto' ? 'Roboto, sans-serif' : `"${globalFont}", sans-serif` }}>
+                    <span>LEVEL 15</span>
+                    <span>1500 / 2500 XP</span>
+                  </div>
+                  <div style={{ width: '100%', height: 12, background: 'rgba(0,0,0,0.5)', borderRadius: 6, marginTop: 5 }}>
+                    <div style={{ width: '60%', height: '100%', background: '#5865F2', borderRadius: 6 }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* USER PREVIEW */
+          <div style={{
+            width: '100%',
+            maxWidth: 520,
+            background: '#2b2d31',
+            borderLeft: `4px solid ${borderColor}`,
+            borderRadius: 4,
+            padding: 16,
+            boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+            boxSizing: 'border-box'
+          }}>
           <h3 style={{ fontSize: '1rem', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
             <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : "https://cdn.discordapp.com/embed/avatars/0.png"} style={{width: 24, height: 24, borderRadius: '50%'}} />
             Level Stats - {user.username || "User"}
@@ -323,7 +508,7 @@ export default function RankManagement() {
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
