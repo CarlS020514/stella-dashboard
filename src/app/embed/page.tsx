@@ -118,7 +118,10 @@ export default function Home() {
   }, [selectedGuild]);
 
   const handleSend = async () => {
-    if (!selectedChannel) return alert('Select a channel first!');
+    // We defer channel validation if personal_vip_rank is selected
+    if (!selectedChannel && selectedGuild !== 'personal_vip_rank') {
+      return alert('Select a channel first!');
+    }
     
     const embed: any = {
       color: parseInt(embedColor.replace('#', ''), 16)
@@ -141,6 +144,25 @@ export default function Home() {
       embed.footer = { text: footerText };
       if (footerIcon) embed.footer.icon_url = footerIcon;
     }
+    
+    if (selectedGuild === "personal_vip_rank") {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/vip/save-rank', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ embed })
+        });
+        if (res.ok) alert('Personal Rank Profile saved successfully!');
+        else alert('Error saving profile');
+      } catch (e) {
+        alert('Failed to save profile');
+      }
+      setLoading(false);
+      return;
+    }
+
+    if (!selectedChannel) return alert('Select a channel first!');
     
     const message_data: any = {};
     if (content) message_data.content = content;
@@ -271,13 +293,16 @@ export default function Home() {
                 <label>Select Server (Admin Only)</label>
                 <select value={selectedGuild} onChange={e => setSelectedGuild(e.target.value)}>
                   <option value="">-- Choose a Server --</option>
+                  {user?.is_vip_plus && (
+                    <option value="personal_vip_rank">👑 Personal VIP+ Rank Profile</option>
+                  )}
                   {guilds.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
                 </select>
               </div>
               <div className="form-group">
                 <label>Select Channel</label>
-                <select value={selectedChannel} onChange={e => setSelectedChannel(e.target.value)} disabled={!selectedGuild}>
-                  <option value="">-- Choose a Channel --</option>
+                <select value={selectedChannel} onChange={e => setSelectedChannel(e.target.value)} disabled={!selectedGuild || selectedGuild === 'personal_vip_rank'}>
+                  <option value="">{selectedGuild === 'personal_vip_rank' ? 'Not Applicable' : '-- Choose a Channel --'}</option>
                   {channels.map(c => <option key={c.id} value={c.id}>#{c.name}</option>)}
                 </select>
               </div>

@@ -43,6 +43,10 @@ export default function Home() {
             <h3>⚡ Lightning Fast</h3>
             <p>Zero latency delivery directly to your Discord channels.</p>
           </div>
+          <div className="feature-card">
+            <h3>📈 Level Count</h3>
+            <p>Earn XP globally, level up, and unlock VIP multipliers across all servers.</p>
+          </div>
         </div>
 
         <div className="cta-section">
