@@ -19,14 +19,11 @@ export async function POST(request: Request) {
     const { embed } = await request.json();
     await connectToDatabase();
     
-    let dbData = await DashboardConfig.findById('dashboard_config');
-    if (!dbData) {
-      dbData = new DashboardConfig();
-    }
-    
-    // Add global_rank_embed dynamically (since we didn't add it to mongoose schema explicitly)
-    dbData.set('global_rank_embed', embed, { strict: false });
-    await dbData.save();
+    await DashboardConfig.updateOne(
+      { _id: 'dashboard_config' },
+      { $set: { global_rank_embed: embed } },
+      { upsert: true, strict: false }
+    );
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
