@@ -2,6 +2,16 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import connectToDatabase from '@/lib/mongodb';
+import mongoose from 'mongoose';
+
+// Same schema/collection pattern as the other working APIs
+const GlobalConfigSchema = new mongoose.Schema({
+  _id: { type: String, default: 'dashboard_config' },
+  stella_rank_embed: { type: Object, default: {} }
+}, { strict: false, collection: 'vip_data' });
+
+const GlobalConfig = mongoose.models.GlobalConfig2 ||
+  mongoose.model('GlobalConfig2', GlobalConfigSchema);
 
 export async function POST(request: Request) {
   const cookieStore = await cookies();
@@ -16,16 +26,12 @@ export async function POST(request: Request) {
     }
 
     const { embed } = await request.json();
-    const conn = await connectToDatabase();
-    
-    // Use the raw MongoDB driver directly - most reliable approach
-    const db = conn.connection.db;
-    if (!db) throw new Error('Database connection not ready');
-    
-    await db.collection('dashboard_config').updateOne(
-      { _id: 'dashboard_config' as any },
+    await connectToDatabase();
+
+    await GlobalConfig.findOneAndUpdate(
+      { _id: 'dashboard_config' },
       { $set: { stella_rank_embed: embed } },
-      { upsert: true }
+      { upsert: true, new: true }
     );
 
     return NextResponse.json({ success: true });
@@ -46,12 +52,9 @@ export async function GET() {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const conn = await connectToDatabase();
-    const db = conn.connection.db;
-    if (!db) throw new Error('Database connection not ready');
-
-    const dbData = await db.collection('dashboard_config').findOne({ _id: 'dashboard_config' as any });
-    return NextResponse.json({ stella_rank_embed: (dbData as any)?.stella_rank_embed || {} });
+    await connectToDatabase();
+    const dbData = await GlobalConfig.findById('dashboard_config').lean() as any;
+    return NextResponse.json({ stella_rank_embed: dbData?.stella_rank_embed || {} });
   } catch (error: any) {
     console.error('stella-rank GET error:', error?.message || error);
     return NextResponse.json({ error: error?.message || 'Failed to fetch' }, { status: 500 });
