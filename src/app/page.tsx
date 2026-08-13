@@ -5,6 +5,8 @@ import Link from 'next/link';
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [userConfig, setUserConfig] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -12,6 +14,13 @@ export default function Home() {
       .then(res => res.json())
       .then(data => {
         setIsAuthenticated(data.authenticated);
+        if (data.authenticated) {
+          setUser(data.user);
+          fetch('/api/vip/get-rank')
+            .then(r => r.json())
+            .then(config => setUserConfig(config))
+            .catch(() => {});
+        }
         setLoading(false);
       });
   }, []);
@@ -32,19 +41,19 @@ export default function Home() {
         
         <div className="feature-grid">
           <div className="feature-card">
-            <h3>🎨 Embed Generator</h3>
+            <h3>Embed Generator</h3>
             <p>Create beautiful, customized embed messages with live previews.</p>
           </div>
           <div className="feature-card">
-            <h3>👑 PRO Features</h3>
+            <h3>PRO Features</h3>
             <p>Customize sender profiles, unlock advanced webhooks, and more.</p>
           </div>
           <div className="feature-card">
-            <h3>⚡ Lightning Fast</h3>
+            <h3>Lightning Fast</h3>
             <p>Zero latency delivery directly to your Discord channels.</p>
           </div>
           <div className="feature-card">
-            <h3>📈 Level Count</h3>
+            <h3>Level Count</h3>
             <p>Earn XP globally, level up, and unlock VIP multipliers across all servers.</p>
           </div>
         </div>
@@ -55,13 +64,38 @@ export default function Home() {
               Login with Discord
             </button>
           ) : (
-            <div className="cta-buttons" style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
-              <Link href="/embed" className="btn btn-primary large-btn" style={{ flex: 1, textAlign: 'center' }}>
-                Open Embed Generator
-              </Link>
-              <Link href="/rank-manager" className="btn btn-discord large-btn" style={{ flex: 1, textAlign: 'center', background: '#5865F2' }}>
-                ⭐ Open Rank Manager
-              </Link>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '30px' }}>
+              {/* Profile Card */}
+              {user && (
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '25px', borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '20px', width: '100%', maxWidth: '500px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : "https://cdn.discordapp.com/embed/avatars/0.png"} style={{width: 80, height: 80, borderRadius: '50%', border: '3px solid #5865F2'}} />
+                  <div style={{ textAlign: 'left', flex: 1 }}>
+                    <div style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>{user.username}</div>
+                    <div style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '8px' }}>Discord ID: {user.id}</div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <span style={{ background: '#5865F2', padding: '3px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                        Level {userConfig?.level || 1}
+                      </span>
+                      {user.is_vip_plus ? (
+                        <span style={{ background: '#f1c40f', color: '#000', padding: '3px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 'bold' }}>VIP+</span>
+                      ) : user.is_vip ? (
+                        <span style={{ background: '#57F287', color: '#000', padding: '3px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 'bold' }}>VIP</span>
+                      ) : (
+                        <span style={{ background: '#333', padding: '3px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 'bold' }}>Standard</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="cta-buttons" style={{ display: 'flex', gap: '20px', justifyItems: 'center', width: '100%', maxWidth: '600px' }}>
+                <Link href="/embed" className="btn btn-primary large-btn" style={{ flex: 1, textAlign: 'center' }}>
+                  Open Embed Generator
+                </Link>
+                <Link href="/rank-management" className="btn btn-discord large-btn" style={{ flex: 1, textAlign: 'center', background: '#5865F2' }}>
+                  Open Rank Management
+                </Link>
+              </div>
             </div>
           )}
         </div>

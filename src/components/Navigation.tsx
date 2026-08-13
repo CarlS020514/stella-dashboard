@@ -143,7 +143,7 @@ export default function Navigation() {
         <nav className="nav-links">
           <Link href="/">Home</Link>
           <Link href="/embed">Embed Generator</Link>
-          <Link href="/rank-customizer">Rank Customizer</Link>
+          <Link href="/rank-management">Rank Management</Link>
         </nav>
       )}
 
