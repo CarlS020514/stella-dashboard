@@ -343,15 +343,13 @@ export default function RankManagement() {
               onClick={() => setActiveTab('admin')}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'bold' }}>
-                <span style={{ color: '#f1c40f' }}>👑 Global Bot Settings (Admin)</span>
+                <span style={{ color: '#f1c40f' }}>⭐ Stella Bot Rank Card</span>
                 <span>{activeTab === 'admin' ? '▼' : '▶'}</span>
               </div>
             </div>
             {activeTab === 'admin' && (
               <div style={{ padding: '20px', background: '#202225', borderTop: '1px solid #333' }}>
-                <div style={{ color: '#f1c40f', marginBottom: 15, fontSize: '0.85rem' }}>
-                  This sets the default rank card appearance for everyone who doesn't have VIP+.
-                </div>
+                <p style={{ margin: '0 0 20px', fontSize: '0.85rem', color: '#80848e' }}>Customizes the rank card shown when someone checks <strong style={{color:'#f1c40f'}}>/rank @StellaBot</strong>. Only visible to you and affects no other user.</p>
                 
                 <div style={{ marginBottom: 15 }}>
                   <label>Global Embed Border Color</label>
@@ -399,7 +397,7 @@ export default function RankManagement() {
                 </div>
 
                 <button className="btn" onClick={handleSaveGlobal} style={{ width: '100%', background: '#f1c40f', color: '#000' }}>
-                  Save Global Defaults
+                  Save Stella Bot Rank Card
                 </button>
               </div>
             )}
