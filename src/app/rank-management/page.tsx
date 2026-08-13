@@ -61,7 +61,7 @@ export default function RankManagement() {
               if (config) {
                 setXpActive(config.xp_multiplier_active !== false);
                 if (config.vip_boost_expires) setBoostExpires(config.vip_boost_expires);
-                if (config.last_bonus_time) setLastBonusTime(config.last_bonus_time);
+                setLastBonusTime(config.last_bonus_time ?? 0);
                 
                 if (config.rank_embed) {
                   setBorderColor(config.rank_embed.color ? '#' + config.rank_embed.color.toString(16).padStart(6, '0') : "#2b2d31");

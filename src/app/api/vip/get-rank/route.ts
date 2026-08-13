@@ -6,7 +6,12 @@ import mongoose from 'mongoose';
 
 const userConfigSchema = new mongoose.Schema({
   _id: { type: String, required: true },
-  rank_embed: { type: Object, default: {} }
+  rank_embed: { type: Object, default: {} },
+  xp_multiplier_active: { type: Boolean, default: true },
+  vip_boost_expires: { type: Number, default: 0 },
+  last_bonus_time: { type: Number, default: 0 },
+  xp: { type: Number, default: 0 },
+  level: { type: Number, default: 0 }
 }, { collection: 'user_configs' });
 
 const UserConfig = mongoose.models.UserConfig || mongoose.model('UserConfig', userConfigSchema);
@@ -23,12 +28,26 @@ export async function GET() {
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
     await connectToDatabase();
     
-    const config = await UserConfig.findById(decoded.id);
+    const config = await UserConfig.findById(decoded.id).lean() as any;
     if (!config) {
-      return NextResponse.json({ rank_embed: null });
+      return NextResponse.json({
+        rank_embed: null,
+        last_bonus_time: 0,
+        xp_multiplier_active: true,
+        vip_boost_expires: 0,
+        xp: 0,
+        level: 0
+      });
     }
 
-    return NextResponse.json({ rank_embed: config.rank_embed });
+    return NextResponse.json({
+      rank_embed: config.rank_embed ?? null,
+      xp_multiplier_active: config.xp_multiplier_active ?? true,
+      vip_boost_expires: config.vip_boost_expires ?? 0,
+      last_bonus_time: config.last_bonus_time ?? 0,
+      xp: config.xp ?? 0,
+      level: config.level ?? 0
+    });
   } catch (error: any) {
     return NextResponse.json({ error: 'Failed to fetch rank profile' }, { status: 500 });
   }
