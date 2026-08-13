@@ -55,9 +55,12 @@ export default function Home() {
               Login with Discord
             </button>
           ) : (
-            <div className="cta-buttons">
-              <Link href="/embed" className="btn btn-primary large-btn">
+            <div className="cta-buttons" style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
+              <Link href="/embed" className="btn btn-primary large-btn" style={{ flex: 1, textAlign: 'center' }}>
                 Open Embed Generator
+              </Link>
+              <Link href="/rank-manager" className="btn btn-discord large-btn" style={{ flex: 1, textAlign: 'center', background: '#5865F2' }}>
+                ⭐ Open Rank Manager
               </Link>
             </div>
           )}

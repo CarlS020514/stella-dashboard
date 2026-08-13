@@ -3,6 +3,16 @@ import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import connectToDatabase from '@/lib/mongodb';
 import DashboardConfig from '@/lib/models/DashboardConfig';
+import mongoose from 'mongoose';
+
+const userConfigSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  rank_embed: { type: Object, default: {} },
+  xp_multiplier_active: { type: Boolean, default: true },
+  vip_boost_expires: { type: Number, default: 0 }
+}, { collection: 'user_configs' });
+
+const UserConfig = mongoose.models.UserConfig || mongoose.model('UserConfig', userConfigSchema);
 
 export async function POST(request: Request) {
   const cookieStore = await cookies();
@@ -67,8 +77,17 @@ export async function POST(request: Request) {
 
     await dbData.save();
 
+    // Add 7 days of 3x XP Boost to user_configs
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    const expiresAt = Date.now() + sevenDaysMs;
+    await UserConfig.findByIdAndUpdate(
+      user.id,
+      { $set: { vip_boost_expires: expiresAt } },
+      { upsert: true }
+    );
+
     const tierName = codeType === 'vipplus' ? 'VIP+' : 'VIP';
-    return NextResponse.json({ message: `Success! You are now ${tierName}.` });
+    return NextResponse.json({ message: `Success! You are now ${tierName}. You received a 7-day 3x XP Boost!` });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
