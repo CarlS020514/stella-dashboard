@@ -78,12 +78,12 @@ export default function RankManagement() {
               }
             }).catch(() => {});
             
-          // If admin, load global rank
+          // If admin, load Stella Bot rank defaults
           if (data.user.username === 'scroppy') {
-            fetch('/api/admin/global-rank')
+            fetch('/api/admin/stella-rank')
               .then(r => r.json())
               .then(globalData => {
-                const conf = globalData.global_rank_embed;
+                const conf = globalData.stella_rank_embed;
                 if (conf) {
                   setGlobalBorderColor(conf.color ? '#' + conf.color.toString(16).padStart(6, '0') : "#2b2d31");
                   setGlobalBgUrl(conf.image_url || "");
@@ -176,7 +176,7 @@ export default function RankManagement() {
       footer_text: `${PROGRESS_STYLES[globalProgressStyle].filled},${PROGRESS_STYLES[globalProgressStyle].empty}`
     };
     
-    const res = await fetch('/api/admin/global-rank', {
+    const res = await fetch('/api/admin/stella-rank', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ embed })
