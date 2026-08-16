@@ -11,7 +11,9 @@ const userConfigSchema = new mongoose.Schema({
   vip_boost_expires: { type: Number, default: 0 },
   last_bonus_time: { type: Number, default: 0 },
   xp: { type: Number, default: 0 },
-  level: { type: Number, default: 0 }
+  level: { type: Number, default: 0 },
+  global_xp: { type: Number, default: 0 },
+  global_level: { type: Number, default: 1 }
 }, { collection: 'user_configs' });
 
 const UserConfig = mongoose.models.UserConfig || mongoose.model('UserConfig', userConfigSchema);
@@ -36,7 +38,9 @@ export async function GET() {
         xp_multiplier_active: true,
         vip_boost_expires: 0,
         xp: 0,
-        level: 0
+        level: 0,
+        global_xp: 0,
+        global_level: 1
       });
     }
 
@@ -46,7 +50,9 @@ export async function GET() {
       vip_boost_expires: config.vip_boost_expires ?? 0,
       last_bonus_time: config.last_bonus_time ?? 0,
       xp: config.xp ?? 0,
-      level: config.level ?? 0
+      level: config.level ?? 0,
+      global_xp: config.global_xp ?? config.xp ?? 0,
+      global_level: config.global_level ?? config.level ?? 1
     });
   } catch (error: any) {
     return NextResponse.json({ error: 'Failed to fetch rank profile' }, { status: 500 });

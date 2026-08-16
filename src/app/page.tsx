@@ -74,7 +74,7 @@ export default function Home() {
                     <div style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '8px' }}>Discord ID: {user.id}</div>
                     <div style={{ display: 'flex', gap: '10px' }}>
                       <span style={{ background: '#5865F2', padding: '3px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                        Level {userConfig?.level || 1}
+                        Global Level {userConfig?.global_level || userConfig?.level || 1}
                       </span>
                       {user.is_vip_plus ? (
                         <span style={{ background: '#f1c40f', color: '#000', padding: '3px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 'bold' }}>VIP+</span>
@@ -88,12 +88,15 @@ export default function Home() {
                 </div>
               )}
 
-              <div className="home-cta-buttons">
+              <div className="home-cta-buttons" style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'center' }}>
                 <Link href="/embed" className="btn btn-primary large-btn">
                   Open Embed Generator
                 </Link>
                 <Link href="/rank-management" className="btn btn-discord large-btn">
                   Open Rank Management
+                </Link>
+                <Link href="/global-ranking" className="btn large-btn" style={{ background: '#3ba55c', color: 'white' }}>
+                  Global Leaderboard
                 </Link>
               </div>
             </div>
