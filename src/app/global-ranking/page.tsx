@@ -168,9 +168,20 @@ export default function GlobalRanking() {
                     </div>
                     
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#5865F2' }}>
-                        {user.global_xp.toLocaleString()} XP
-                      </div>
+                      {index === 0 ? (
+                        <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFD700', textShadow: '0 0 10px rgba(255,215,0,0.5)' }}>
+                          👑 Leader
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                          <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ed4245' }}>
+                            -{ (leaderboard[index - 1].global_xp - user.global_xp).toLocaleString() } XP
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: '#949ba4', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            from rank #{index}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
