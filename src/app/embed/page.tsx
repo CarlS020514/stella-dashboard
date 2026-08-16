@@ -229,6 +229,9 @@ export default function Home() {
     if (Object.keys(embed).length > 1 || embedTitle || embedDescription) {
       message_data.embeds = [embed];
     }
+
+    if (senderName) message_data.username = senderName;
+    if (senderAvatar) message_data.avatar_url = senderAvatar;
     
     navigator.clipboard.writeText(JSON.stringify(message_data, null, 2));
     setShowTutorial(true);
