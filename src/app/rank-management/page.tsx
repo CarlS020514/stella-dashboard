@@ -352,7 +352,7 @@ export default function RankManagement() {
                 <p style={{ margin: '0 0 20px', fontSize: '0.85rem', color: '#80848e' }}>Customizes the rank card shown when someone checks <strong style={{color:'#f1c40f'}}>/rank @StellaBot</strong>. Only visible to you and affects no other user.</p>
                 
                 <div style={{ marginBottom: 15 }}>
-                  <label>Global Embed Border Color</label>
+                  <label>Stella Bot Embed Border Color</label>
                   <input 
                     type="color" 
                     value={globalBorderColor} 
@@ -362,7 +362,7 @@ export default function RankManagement() {
                 </div>
                 
                 <div style={{ marginBottom: 15 }}>
-                  <label>Global Background Image URL</label>
+                  <label>Stella Bot Background Image URL</label>
                   <input 
                     type="text" 
                     placeholder="https://example.com/image.png" 
@@ -373,7 +373,7 @@ export default function RankManagement() {
                 </div>
 
                 <div style={{ marginBottom: 15 }}>
-                  <label>Global Default Font</label>
+                  <label>Stella Bot Default Font</label>
                   <select 
                     value={globalFont} 
                     onChange={e => setGlobalFont(e.target.value)} 
@@ -384,7 +384,7 @@ export default function RankManagement() {
                 </div>
 
                 <div style={{ marginBottom: 20 }}>
-                  <label>Global Progress Bar Style</label>
+                  <label>Stella Bot Progress Bar Style</label>
                   <select 
                     value={globalProgressStyle} 
                     onChange={e => setGlobalProgressStyle(parseInt(e.target.value))} 
