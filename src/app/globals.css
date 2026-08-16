@@ -258,6 +258,44 @@ header {
   box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
+.home-profile-card {
+  background: rgba(255,255,255,0.05);
+  padding: 25px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.home-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid #5865F2;
+}
+
+.home-profile-info {
+  text-align: left;
+  flex: 1;
+}
+
+.home-cta-buttons {
+  display: flex;
+  gap: 20px;
+  justify-items: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+.home-cta-buttons a {
+  flex: 1;
+  text-align: center;
+}
+
+
 .glass-panel h1 {
   font-size: 2rem;
   margin-bottom: 15px;
@@ -834,5 +872,19 @@ input:checked + .slider:before {
   }
   .feature-grid {
     grid-template-columns: 1fr;
+  }
+  .home-profile-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .home-profile-info {
+    text-align: center;
+  }
+  .home-profile-info > div {
+    justify-content: center;
+  }
+  .home-cta-buttons {
+    flex-direction: column;
+    gap: 15px;
   }
 }

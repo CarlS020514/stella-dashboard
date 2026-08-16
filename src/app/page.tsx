@@ -67,9 +67,9 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '30px' }}>
               {/* Profile Card */}
               {user && (
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '25px', borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '20px', width: '100%', maxWidth: '500px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                  <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : "https://cdn.discordapp.com/embed/avatars/0.png"} style={{width: 80, height: 80, borderRadius: '50%', border: '3px solid #5865F2'}} />
-                  <div style={{ textAlign: 'left', flex: 1 }}>
+                <div className="home-profile-card">
+                  <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : "https://cdn.discordapp.com/embed/avatars/0.png"} className="home-avatar" />
+                  <div className="home-profile-info">
                     <div style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>{user.username}</div>
                     <div style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '8px' }}>Discord ID: {user.id}</div>
                     <div style={{ display: 'flex', gap: '10px' }}>
@@ -88,11 +88,11 @@ export default function Home() {
                 </div>
               )}
 
-              <div className="cta-buttons" style={{ display: 'flex', gap: '20px', justifyItems: 'center', width: '100%', maxWidth: '600px' }}>
-                <Link href="/embed" className="btn btn-primary large-btn" style={{ flex: 1, textAlign: 'center' }}>
+              <div className="home-cta-buttons">
+                <Link href="/embed" className="btn btn-primary large-btn">
                   Open Embed Generator
                 </Link>
-                <Link href="/rank-management" className="btn btn-discord large-btn" style={{ flex: 1, textAlign: 'center', background: '#5865F2' }}>
+                <Link href="/rank-management" className="btn btn-discord large-btn">
                   Open Rank Management
                 </Link>
               </div>
