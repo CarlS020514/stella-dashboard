@@ -23,9 +23,7 @@ export async function POST(request: Request) {
 
     const { embed } = await request.json();
     
-    // Safely get the collection through mongoose which handles buffering
-    const collection = mongoose.connection.collection('vip_data');
-    
+
     await collection.updateOne(
       { _id: 'dashboard_config' as any },
       { $set: { stella_rank_embed: embed } },
