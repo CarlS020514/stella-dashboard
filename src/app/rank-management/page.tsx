@@ -420,8 +420,8 @@ export default function RankManagement() {
             boxSizing: 'border-box'
           }}>
             <h3 style={{ fontSize: '1rem', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : "https://cdn.discordapp.com/embed/avatars/0.png"} style={{width: 24, height: 24, borderRadius: '50%'}} />
-              Level Stats - {user.username || "User"}
+              <img src={"https://cdn.discordapp.com/embed/avatars/5.png"} style={{width: 24, height: 24, borderRadius: '50%'}} />
+              Level Stats - sтєℓℓα вღт
             </h3>
             
             <div style={{ display: 'flex', gap: 20, marginBottom: 12 }}>
@@ -455,9 +455,9 @@ export default function RankManagement() {
               {globalBgUrl && <div style={{position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)'}}></div>}
               
               <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', width: '100%', padding: 20, gap: 15 }}>
-                <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : "https://cdn.discordapp.com/embed/avatars/0.png"} style={{width: 80, height: 80, borderRadius: '50%', border: '3px solid rgba(255,255,255,0.7)'}} />
+                <img src={"https://cdn.discordapp.com/embed/avatars/5.png"} style={{width: 80, height: 80, borderRadius: '50%', border: '3px solid rgba(255,255,255,0.7)'}} />
                 <div style={{ flex: 1 }}>
-                  <div style={{ color: '#fff', fontSize: '1.2rem', fontFamily: globalFont === 'Roboto' ? 'Roboto, sans-serif' : `"${globalFont}", sans-serif`, fontWeight: 'bold' }}>{user.username}</div>
+                  <div style={{ color: '#fff', fontSize: '1.2rem', fontFamily: globalFont === 'Roboto' ? 'Roboto, sans-serif' : `"${globalFont}", sans-serif`, fontWeight: 'bold' }}>sтєℓℓα вღт</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10, color: '#ddd', fontSize: '0.9rem', fontFamily: globalFont === 'Roboto' ? 'Roboto, sans-serif' : `"${globalFont}", sans-serif` }}>
                     <span>LEVEL 15</span>
                     <span>1500 / 2500 XP</span>
