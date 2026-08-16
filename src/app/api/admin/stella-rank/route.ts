@@ -12,12 +12,16 @@ export async function POST(request: Request) {
 
   try {
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-    if (decoded.username !== 'scroppy') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const conn = await connectToDatabase();
+    const collection = mongoose.connection.collection('vip_data');
+    const dbData = await collection.findOne({ _id: 'dashboard_config' as any });
+
+    const vipPlusUsers = dbData?.vipPlusUsers || [];
+    if (!vipPlusUsers.includes(decoded.id)) {
+      return NextResponse.json({ error: 'Forbidden: VIP+ required for bot rank configuration' }, { status: 403 });
     }
 
     const { embed } = await request.json();
-    await connectToDatabase();
     
     // Safely get the collection through mongoose which handles buffering
     const collection = mongoose.connection.collection('vip_data');
@@ -42,13 +46,15 @@ export async function GET() {
 
   try {
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-    if (decoded.username !== 'scroppy') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
 
     await connectToDatabase();
     const collection = mongoose.connection.collection('vip_data');
     const dbData = await collection.findOne({ _id: 'dashboard_config' as any });
+
+    const vipPlusUsers = dbData?.vipPlusUsers || [];
+    if (!vipPlusUsers.includes(decoded.id)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     return NextResponse.json({ stella_rank_embed: (dbData as any)?.stella_rank_embed || {} });
   } catch (error: any) {
     console.error('stella-rank GET error:', error?.message || error);

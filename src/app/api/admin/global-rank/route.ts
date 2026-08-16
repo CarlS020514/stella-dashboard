@@ -12,12 +12,17 @@ export async function POST(request: Request) {
 
   try {
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-    if (decoded.username !== 'scroppy') { // Hardcoded Admin Check
+
+    await connectToDatabase();
+    const collection = mongoose.connection.collection('vip_data');
+    const dbData = await collection.findOne({ _id: 'dashboard_config' as any });
+
+    const vipPlusUsers = dbData?.vipPlusUsers || [];
+    if (!vipPlusUsers.includes(decoded.id)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { embed } = await request.json();
-    await connectToDatabase();
     
     await DashboardConfig.updateOne(
       { _id: 'dashboard_config' },
@@ -38,12 +43,15 @@ export async function GET(request: Request) {
 
   try {
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-    if (decoded.username !== 'scroppy') { 
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
 
     await connectToDatabase();
-    const dbData = await DashboardConfig.findById('dashboard_config').lean();
+    const collection = mongoose.connection.collection('vip_data');
+    const dbData = await collection.findOne({ _id: 'dashboard_config' as any });
+
+    const vipPlusUsers = dbData?.vipPlusUsers || [];
+    if (!vipPlusUsers.includes(decoded.id)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     
     return NextResponse.json({ global_rank_embed: (dbData as any)?.global_rank_embed || {} });
   } catch (error: any) {
