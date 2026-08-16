@@ -183,9 +183,10 @@ export default function RankManagement() {
     });
     
     if (res.ok) {
-      alert("Global Default Rank Card Saved Successfully!");
+      alert("Stella Bot Rank Card Saved Successfully!");
     } else {
-      alert("Error saving global config.");
+      const errData = await res.json().catch(() => ({}));
+      alert("Error saving config: " + (errData.error || res.statusText));
     }
   };
 

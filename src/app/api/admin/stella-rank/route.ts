@@ -16,13 +16,12 @@ export async function POST(request: Request) {
     }
 
     const { embed } = await request.json();
-    const conn = await connectToDatabase();
+    await connectToDatabase();
     
-    const db = conn.connection.db;
-    if (!db) throw new Error('Database connection not ready');
+    // Safely get the collection through mongoose which handles buffering
+    const collection = mongoose.connection.collection('vip_data');
     
-    // The collection is 'vip_data' and the document ID is 'dashboard_config'
-    await db.collection('vip_data').updateOne(
+    await collection.updateOne(
       { _id: 'dashboard_config' as any },
       { $set: { stella_rank_embed: embed } },
       { upsert: true }
@@ -46,11 +45,9 @@ export async function GET() {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const conn = await connectToDatabase();
-    const db = conn.connection.db;
-    if (!db) throw new Error('Database connection not ready');
-
-    const dbData = await db.collection('vip_data').findOne({ _id: 'dashboard_config' as any });
+    await connectToDatabase();
+    const collection = mongoose.connection.collection('vip_data');
+    const dbData = await collection.findOne({ _id: 'dashboard_config' as any });
     return NextResponse.json({ stella_rank_embed: (dbData as any)?.stella_rank_embed || {} });
   } catch (error: any) {
     console.error('stella-rank GET error:', error?.message || error);
