@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import connectToDatabase from '@/lib/mongodb';
+import mongoose from 'mongoose';
 import DashboardConfig from '@/lib/models/DashboardConfig';
 
 export async function POST(request: Request) {
